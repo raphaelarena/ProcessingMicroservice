@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProcessingMicroservice.QueueProcessors;
+using ProcessingMicroservice.QueueProcessors.Interface;
 using ProcessingMicroservice.Repositories;
 using ProcessingMicroservice.Repositories.Interface;
 

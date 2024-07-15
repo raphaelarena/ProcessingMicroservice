@@ -1,4 +1,5 @@
 ﻿using ProcessingMicroservice.Entities;
+using ProcessingMicroservice.QueueProcessors.Interface;
 using ProcessingMicroservice.Repositories.Interface;
 using ProcessingMicroservice.Utils;
 using RabbitMQ.Client;

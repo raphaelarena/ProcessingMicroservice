@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProcessingMicroservice.QueueProcessors
+namespace ProcessingMicroservice.QueueProcessors.Interface
 {
     public interface IQueueProcessor
     {
