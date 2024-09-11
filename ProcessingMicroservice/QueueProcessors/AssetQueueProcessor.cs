@@ -13,31 +13,31 @@ using System.Threading.Tasks;
 
 namespace ProcessingMicroservice.QueueProcessors
 {
-    public class TurmaQueueProcessor : IQueueProcessor
+    public class AssetQueueProcessor : IQueueProcessor
     {
-        private readonly ITurmaRepository _turmaRepository;
+        private readonly IAssetRepository _assetRepository;
 
-        public TurmaQueueProcessor(ITurmaRepository turmaRepository)
+        public AssetQueueProcessor(IAssetRepository assetRepository)
         {
-            _turmaRepository = turmaRepository;
+            _assetRepository = assetRepository;
         }
 
         public void ProcessSaveQueue()
         {
-            ProcessQueue("queue-turma-save", (turma) => _turmaRepository.Save(turma));
+            ProcessQueue("queue-asset-save", (asset) => _assetRepository.Save(asset));
         }
 
         public void ProcessUpdateQueue()
         {
-            ProcessQueue("queue-turma-update", (turma) => _turmaRepository.Update(turma));
+            ProcessQueue("queue-asset-update", (asset) => _assetRepository.Update(asset));
         }
 
         public void ProcessDeleteQueue()
         {
-            ProcessQueue("queue-turma-delete", (turma) => _turmaRepository.Delete(turma));
+            ProcessQueue("queue-asset-delete", (asset) => _assetRepository.Delete(asset));
         }
 
-        private void ProcessQueue(string queueName, Action<Turma> processAction)
+        private void ProcessQueue(string queueName, Action<Asset> processAction)
         {
             using var connection = RabbitMQConnectionFactory.CreateConnection();
             using var channel = connection.CreateModel();
@@ -53,9 +53,9 @@ namespace ProcessingMicroservice.QueueProcessors
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                var turma = JsonSerializer.Deserialize<Turma>(message);
+                var asset = JsonSerializer.Deserialize<Asset>(message);
 
-                processAction(turma);
+                processAction(asset);
             };
 
             channel.BasicConsume(queue: queueName,

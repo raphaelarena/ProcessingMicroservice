@@ -13,31 +13,31 @@ using System.Threading.Tasks;
 
 namespace ProcessingMicroservice.QueueProcessors
 {
-    public class CursoQueueProcessor : IQueueProcessor
+    public class DividendInterestQueueProcessor : IQueueProcessor
     {
-        private readonly ICursoRepository _cursoRepository;
+        private readonly IDividendInterestRepository _dividendinterestRepository;
 
-        public CursoQueueProcessor(ICursoRepository cursoRepository)
+        public DividendInterestQueueProcessor(IDividendInterestRepository dividendinterestRepository)
         {
-            _cursoRepository = cursoRepository;
+            _dividendinterestRepository = dividendinterestRepository;
         }
 
         public void ProcessSaveQueue()
         {
-            ProcessQueue("queue-curso-save", (curso) => _cursoRepository.Save(curso));
+            ProcessQueue("queue-dividendinterest-save", (dividendinterest) => _dividendinterestRepository.Save(dividendinterest));
         }
 
         public void ProcessUpdateQueue()
         {
-            ProcessQueue("queue-curso-update", (curso) => _cursoRepository.Update(curso));
+            ProcessQueue("queue-dividendinterest-update", (dividendinterest) => _dividendinterestRepository.Update(dividendinterest));
         }
 
         public void ProcessDeleteQueue()
         {
-            ProcessQueue("queue-curso-delete", (curso) => _cursoRepository.Delete(curso));
+            ProcessQueue("queue-dividendinterest-delete", (dividendinterest) => _dividendinterestRepository.Delete(dividendinterest));
         }
 
-        private void ProcessQueue(string queueName, Action<Curso> processAction)
+        private void ProcessQueue(string queueName, Action<DividendInterest> processAction)
         {
             using var connection = RabbitMQConnectionFactory.CreateConnection();
             using var channel = connection.CreateModel();
@@ -53,9 +53,9 @@ namespace ProcessingMicroservice.QueueProcessors
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                var curso = JsonSerializer.Deserialize<Curso>(message);
+                var dividendinterest = JsonSerializer.Deserialize<DividendInterest>(message);
 
-                processAction(curso);
+                processAction(dividendinterest);
             };
 
             channel.BasicConsume(queue: queueName,

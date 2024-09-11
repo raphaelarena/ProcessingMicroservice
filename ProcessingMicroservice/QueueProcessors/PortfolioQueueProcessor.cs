@@ -13,31 +13,31 @@ using System.Threading.Tasks;
 
 namespace ProcessingMicroservice.QueueProcessors
 {
-    public class UsuarioQueueProcessor : IQueueProcessor
+    public class PortfolioQueueProcessor : IQueueProcessor
     {
-        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IPortfolioRepository _portfolioRepository;
 
-        public UsuarioQueueProcessor(IUsuarioRepository usuarioRepository)
+        public PortfolioQueueProcessor(IPortfolioRepository portfolioRepository)
         {
-            _usuarioRepository = usuarioRepository;
+            _portfolioRepository = portfolioRepository;
         }
 
         public void ProcessSaveQueue()
         {
-            ProcessQueue("queue-usuario-save", (usuario) => _usuarioRepository.Save(usuario));
+            ProcessQueue("queue-portfolio-save", (portfolio) => _portfolioRepository.Save(portfolio));
         }
 
         public void ProcessUpdateQueue()
         {
-            ProcessQueue("queue-usuario-update", (usuario) => _usuarioRepository.Update(usuario));
+            ProcessQueue("queue-portfolio-update", (portfolio) => _portfolioRepository.Update(portfolio));
         }
 
         public void ProcessDeleteQueue()
         {
-            ProcessQueue("queue-usuario-delete", (usuario) => _usuarioRepository.Delete(usuario));
+            ProcessQueue("queue-portfolio-delete", (portfolio) => _portfolioRepository.Delete(portfolio));
         }
 
-        private void ProcessQueue(string queueName, Action<Usuario> processAction)
+        private void ProcessQueue(string queueName, Action<Portfolio> processAction)
         {
             using var connection = RabbitMQConnectionFactory.CreateConnection();
             using var channel = connection.CreateModel();
@@ -53,9 +53,9 @@ namespace ProcessingMicroservice.QueueProcessors
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                var usuario = JsonSerializer.Deserialize<Usuario>(message);
+                var portfolio = JsonSerializer.Deserialize<Portfolio>(message);
 
-                processAction(usuario);
+                processAction(portfolio);
             };
 
             channel.BasicConsume(queue: queueName,

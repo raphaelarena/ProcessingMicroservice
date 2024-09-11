@@ -6,33 +6,33 @@ using System.Data.SqlClient;
 
 namespace ProcessingMicroservice.Repositories
 {
-    public class TurmaRepository : ITurmaRepository
+    public class PriceHistoryRepository : IPriceHistoryRepository
     {
         private readonly string _connectionString;
 
-        public TurmaRepository(IConfiguration configuration)
+        public PriceHistoryRepository(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public void Save(Turma turma)
+        public void Save(PriceHistory turma)
         {
             using var dbConnection = new SqlConnection(_connectionString);
-            var query = "INSERT INTO Turmas  VALUES (@CursoId, @Nome, @Horario, @Local)";
+            var query = "INSERT INTO PriceHistories VALUES (@AssetId, @QuoteDate, @OpeningPrice, @ClosingPrice, @Low, @High, @Volume)";
             dbConnection.Execute(query, turma);
         }
 
-        public void Update(Turma turma)
+        public void Update(PriceHistory turma)
         {
             using var dbConnection = new SqlConnection(_connectionString);
-            var query = "UPDATE Turmas SET NOME = @Nome, Horario = @Horario, Local = @Local WHERE turma_id = @TurmaId ";
+            var query = "UPDATE PriceHistories SET AssetId = @AssetId, QuoteDate = @QuoteDate, OpeningPrice = @OpeningPrice, ClosingPrice = @ClosingPrice, Low = @Low, High = @High, Volume = @Volume WHERE Id = @Id ";
             dbConnection.Query(query, turma);
         }
 
-        public void Delete(Turma turma)
+        public void Delete(PriceHistory turma)
         {
             using var dbConnection = new SqlConnection(_connectionString);
-            var query = "DELETE FROM Turmas where turma_id = @Id";
+            var query = "DELETE FROM PriceHistories where Id = @Id";
             dbConnection.Execute(query, new { Id = turma.Id });
         }
     }

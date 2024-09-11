@@ -14,21 +14,23 @@ class Program
         using var scope = host.Services.CreateScope();
         var services = scope.ServiceProvider;
 
-        var alunoQueueProcessor = services.GetRequiredService<AlunoQueueProcessor>();
-        var cursoQueueProcessor = services.GetRequiredService<CursoQueueProcessor>();
-        var matriculaQueueProcessor = services.GetRequiredService<MatriculaQueueProcessor>();
-        var professorQueueProcessor = services.GetRequiredService<ProfessorQueueProcessor>();
-        var turmaQueueProcessor = services.GetRequiredService<TurmaQueueProcessor>();
-        var usuarioQueueProcessor = services.GetRequiredService<UsuarioQueueProcessor>();
+        var assetQueueProcessor = services.GetRequiredService<AssetQueueProcessor>();
+        var dividendInterestQueueProcessor = services.GetRequiredService<DividendInterestQueueProcessor>();
+        var marketValueQueueProcessor = services.GetRequiredService<MarketValueQueueProcessor>();
+        var portfolioQueueProcessor = services.GetRequiredService<PortfolioQueueProcessor>();
+        var priceHistoryQueueProcessor = services.GetRequiredService<PriceHistoryQueueProcessor>();
+        var transactionQueueProcessor = services.GetRequiredService<TransactionQueueProcessor>();
+        var userQueueProcessor = services.GetRequiredService<UserQueueProcessor>();
 
         var processors = new IQueueProcessor[]
         {
-                alunoQueueProcessor,
-                cursoQueueProcessor,
-                matriculaQueueProcessor,
-                professorQueueProcessor,
-                turmaQueueProcessor,
-                usuarioQueueProcessor
+                assetQueueProcessor,
+                dividendInterestQueueProcessor,
+                marketValueQueueProcessor,
+                portfolioQueueProcessor,
+                priceHistoryQueueProcessor,
+                transactionQueueProcessor,
+                userQueueProcessor
         };
 
         foreach (var processor in processors)
@@ -47,19 +49,21 @@ class Program
             .ConfigureServices((_, services) =>
             {
                 // Add repositories
-                services.AddSingleton<IAlunoRepository, AlunoRepository>();
-                services.AddSingleton<ICursoRepository, CursoRepository>();
-                services.AddSingleton<IMatriculaRepository, MatriculaRepository>();
-                services.AddSingleton<IProfessorRepository, ProfessorRepository>();
-                services.AddSingleton<ITurmaRepository, TurmaRepository>();
-                services.AddSingleton<IUsuarioRepository, UsuarioRepository>();
+                services.AddSingleton<IAssetRepository, AssetRepository>();
+                services.AddSingleton<IDividendInterestRepository, DividendInterestRepository>();
+                services.AddSingleton<IMarketValueRepository, MarketValueRepository>();
+                services.AddSingleton<IPortfolioRepository, PortfolioRepository>();
+                services.AddSingleton<IPriceHistoryRepository, PriceHistoryRepository>();
+                services.AddSingleton<ITransactionRepository, TransactionRepository>();
+                services.AddSingleton<IUserRepository, UserRepository>();
 
                 // Add queue processors
-                services.AddSingleton<AlunoQueueProcessor>();
-                services.AddSingleton<CursoQueueProcessor>();
-                services.AddSingleton<MatriculaQueueProcessor>();
-                services.AddSingleton<ProfessorQueueProcessor>();
-                services.AddSingleton<TurmaQueueProcessor>();
-                services.AddSingleton<UsuarioQueueProcessor>();
+                services.AddSingleton<AssetQueueProcessor>();
+                services.AddSingleton<DividendInterestQueueProcessor>();
+                services.AddSingleton<MarketValueQueueProcessor>();
+                services.AddSingleton<PortfolioQueueProcessor>();
+                services.AddSingleton<PriceHistoryQueueProcessor>();
+                services.AddSingleton<TransactionQueueProcessor>();
+                services.AddSingleton<UserQueueProcessor>();
             });
 }

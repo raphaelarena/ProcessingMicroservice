@@ -13,31 +13,31 @@ using System.Threading.Tasks;
 
 namespace ProcessingMicroservice.QueueProcessors
 {
-    public class AlunoQueueProcessor : IQueueProcessor
+    public class UserQueueProcessor : IQueueProcessor
     {
-        private readonly IAlunoRepository _alunoRepository;
+        private readonly IUserRepository _userRepository;
 
-        public AlunoQueueProcessor(IAlunoRepository alunoRepository)
+        public UserQueueProcessor(IUserRepository userRepository)
         {
-            _alunoRepository = alunoRepository;
+            _userRepository = userRepository;
         }
 
         public void ProcessSaveQueue()
         {
-            ProcessQueue("queue-aluno-save", (aluno) => _alunoRepository.Save(aluno));
+            ProcessQueue("queue-user-save", (user) => _userRepository.Save(user));
         }
 
         public void ProcessUpdateQueue()
         {
-            ProcessQueue("queue-aluno-update", (aluno) => _alunoRepository.Update(aluno));
+            ProcessQueue("queue-user-update", (user) => _userRepository.Update(user));
         }
 
         public void ProcessDeleteQueue()
         {
-            ProcessQueue("queue-aluno-delete", (aluno) => _alunoRepository.Delete(aluno));
+            ProcessQueue("queue-user-delete", (user) => _userRepository.Delete(user));
         }
 
-        private void ProcessQueue(string queueName, Action<Aluno> processAction)
+        private void ProcessQueue(string queueName, Action<User> processAction)
         {
             using var connection = RabbitMQConnectionFactory.CreateConnection();
             using var channel = connection.CreateModel();
@@ -53,9 +53,9 @@ namespace ProcessingMicroservice.QueueProcessors
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                var aluno = JsonSerializer.Deserialize<Aluno>(message);
+                var user = JsonSerializer.Deserialize<User>(message);
 
-                processAction(aluno);
+                processAction(user);
             };
 
             channel.BasicConsume(queue: queueName,

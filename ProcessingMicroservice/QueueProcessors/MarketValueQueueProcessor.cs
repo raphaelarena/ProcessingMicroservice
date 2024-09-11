@@ -13,31 +13,31 @@ using System.Threading.Tasks;
 
 namespace ProcessingMicroservice.QueueProcessors
 {
-    public class MatriculaQueueProcessor : IQueueProcessor
+    public class MarketValueQueueProcessor : IQueueProcessor
     {
-        private readonly IMatriculaRepository _matriculaRepository;
+        private readonly IMarketValueRepository _marketvalueRepository;
 
-        public MatriculaQueueProcessor(IMatriculaRepository matriculaRepository)
+        public MarketValueQueueProcessor(IMarketValueRepository marketvalueRepository)
         {
-            _matriculaRepository = matriculaRepository;
+            _marketvalueRepository = marketvalueRepository;
         }
 
         public void ProcessSaveQueue()
         {
-            ProcessQueue("queue-matricula-save", (matricula) => _matriculaRepository.Save(matricula));
+            ProcessQueue("queue-marketvalue-save", (marketvalue) => _marketvalueRepository.Save(marketvalue));
         }
 
         public void ProcessUpdateQueue()
         {
-            ProcessQueue("queue-matricula-update", (matricula) => _matriculaRepository.Update(matricula));
+            ProcessQueue("queue-marketvalue-update", (marketvalue) => _marketvalueRepository.Update(marketvalue));
         }
 
         public void ProcessDeleteQueue()
         {
-            ProcessQueue("queue-matricula-delete", (matricula) => _matriculaRepository.Delete(matricula));
+            ProcessQueue("queue-marketvalue-delete", (marketvalue) => _marketvalueRepository.Delete(marketvalue));
         }
 
-        private void ProcessQueue(string queueName, Action<Matricula> processAction)
+        private void ProcessQueue(string queueName, Action<MarketValue> processAction)
         {
             using var connection = RabbitMQConnectionFactory.CreateConnection();
             using var channel = connection.CreateModel();
@@ -53,9 +53,9 @@ namespace ProcessingMicroservice.QueueProcessors
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                var matricula = JsonSerializer.Deserialize<Matricula>(message);
+                var marketvalue = JsonSerializer.Deserialize<MarketValue>(message);
 
-                processAction(matricula);
+                processAction(marketvalue);
             };
 
             channel.BasicConsume(queue: queueName,

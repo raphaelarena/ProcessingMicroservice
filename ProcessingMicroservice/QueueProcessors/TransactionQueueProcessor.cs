@@ -13,31 +13,31 @@ using System.Threading.Tasks;
 
 namespace ProcessingMicroservice.QueueProcessors
 {
-    public class ProfessorQueueProcessor : IQueueProcessor
+    public class TransactionQueueProcessor : IQueueProcessor
     {
-        private readonly IProfessorRepository _professorRepository;
+        private readonly ITransactionRepository _transactionRepository;
 
-        public ProfessorQueueProcessor(IProfessorRepository professorRepository)
+        public TransactionQueueProcessor(ITransactionRepository transactionRepository)
         {
-            _professorRepository = professorRepository;
+            _transactionRepository = transactionRepository;
         }
 
         public void ProcessSaveQueue()
         {
-            ProcessQueue("queue-professor-save", (professor) => _professorRepository.Save(professor));
+            ProcessQueue("queue-transaction-save", (transaction) => _transactionRepository.Save(transaction));
         }
 
         public void ProcessUpdateQueue()
         {
-            ProcessQueue("queue-professor-update", (professor) => _professorRepository.Update(professor));
+            ProcessQueue("queue-transaction-update", (transaction) => _transactionRepository.Update(transaction));
         }
 
         public void ProcessDeleteQueue()
         {
-            ProcessQueue("queue-professor-delete", (professor) => _professorRepository.Delete(professor));
+            ProcessQueue("queue-transaction-delete", (transaction) => _transactionRepository.Delete(transaction));
         }
 
-        private void ProcessQueue(string queueName, Action<Professor> processAction)
+        private void ProcessQueue(string queueName, Action<Transaction> processAction)
         {
             using var connection = RabbitMQConnectionFactory.CreateConnection();
             using var channel = connection.CreateModel();
@@ -53,9 +53,9 @@ namespace ProcessingMicroservice.QueueProcessors
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                var professor = JsonSerializer.Deserialize<Professor>(message);
+                var transaction = JsonSerializer.Deserialize<Transaction>(message);
 
-                processAction(professor);
+                processAction(transaction);
             };
 
             channel.BasicConsume(queue: queueName,

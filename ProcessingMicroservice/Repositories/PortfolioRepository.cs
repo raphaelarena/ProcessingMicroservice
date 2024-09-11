@@ -6,34 +6,34 @@ using System.Data.SqlClient;
 
 namespace ProcessingMicroservice.Repositories
 {
-    public class UsuarioRepository : IUsuarioRepository
+    public class PortfolioRepository : IPortfolioRepository
     {
         private readonly string _connectionString;
 
-        public UsuarioRepository(IConfiguration configuration)
+        public PortfolioRepository(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public void Save(Usuario usuario)
+        public void Save(Portfolio portfolio)
         {
             using var dbConnection = new SqlConnection(_connectionString);
-            var query = "INSERT INTO USUARIO VALUES (@UserName, @Senha, @TipoUsuario, @Idreferente)  ";
-            dbConnection.Execute(query, usuario);
+            var query = "INSERT INTO Portfolio VALUES (@Name, @UserId)";
+            dbConnection.Execute(query, portfolio);
         }
 
-        public void Update(Usuario usuario)
+        public void Update(Portfolio portfolio)
         {
             using var dbConnection = new SqlConnection(_connectionString);
-            var query = "UPDATE USUARIO SET USERNAME = @UserName WHERE USUARIO_ID = @UsuarioId ";
-            dbConnection.Query(query, usuario);
+            var query = "UPDATE Portfolio SET Name = @Name, UserId = @UserId WHERE Id = @Id ";
+            dbConnection.Query(query, portfolio);
         }
 
-        public void Delete(Usuario usuario)
+        public void Delete(Portfolio portfolio)
         {
             using var dbConnection = new SqlConnection(_connectionString);
-            var query = "DELETE FROM USUARIO where usuario_id = @Id";
-            dbConnection.Execute(query, new { Id = usuario.Id });
+            var query = "DELETE FROM Portfolio where Id = @Id";
+            dbConnection.Execute(query, new { Id = portfolio.Id });
         }
     }
 }
